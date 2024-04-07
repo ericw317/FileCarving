@@ -1,0 +1,3 @@
+Required installations to run this:
+pip install Pillow
+pip install zipfile
