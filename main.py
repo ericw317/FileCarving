@@ -214,7 +214,7 @@ while True:
                       "3) Zip and Modern Office Files\n"
                       "4) All of the above\n"
                       "0) Exit\n")
-    while not selection.isnumeric() or int(selection) < 0 or int(selection) > 3:
+    while not selection.isnumeric() or int(selection) < 0 or int(selection) > 4:
         selection = input("Input must be a number between 0-2. Try again.\n")
 
     if int(selection) == 0:
