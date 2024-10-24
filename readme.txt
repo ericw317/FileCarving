@@ -7,3 +7,5 @@ Below are the files that this program is currently capable of carving:
 - Modern Office Files (docx, pptx, xlsx)
 
 More will be added soon.
+
+Direct executable download: https://sourceforge.net/projects/file-carver/
