@@ -3,7 +3,7 @@ import carving_functions
 
 def main(page: ft.Page):
     # functions
-    def get_dir(e: ft.FilePickerResultEvent):
+    def get_output_dir(e: ft.FilePickerResultEvent):
         if e.path:
             t_output_directory.value = e.path
             t_output_directory.update()
@@ -11,10 +11,18 @@ def main(page: ft.Page):
             "Cancelled"
         return 0
 
+    def get_unallocated_dir(e: ft.FilePickerResultEvent):
+        if e.path:
+            t_unallocated_dir.value = e.path
+            t_unallocated_dir.update()
+        else:
+            "Cancelled"
+        return 0
+
     def get_file(e: ft.FilePickerResultEvent):
         if e.files:
-            t_selected_file.value = e.files[0].path
-            t_selected_file.update()
+            t_unallocated_dir.value = e.files[0].path
+            t_unallocated_dir.update()
         else:
             "Cancelled"
         return 0
@@ -50,8 +58,8 @@ def main(page: ft.Page):
 
     def error_handling():
         page.dialog = dlg_error
-        if t_selected_file.value == "":
-            dlg_error.content = ft.Text("No file has been selected.")
+        if t_unallocated_dir.value == "":
+            dlg_error.content = ft.Text("No unallocated space directory has been selected.")
             dlg_error.open = True
             page.update()
             return True
@@ -72,7 +80,8 @@ def main(page: ft.Page):
     page.title = "File Carver"
 
     # dialogues
-    dlg_pick_dir = ft.FilePicker(on_result=get_dir)
+    dlg_pick_dir = ft.FilePicker(on_result=get_output_dir)
+    dlg_get_unallocated_dir = ft.FilePicker(on_result=get_unallocated_dir)
     dlg_pick_file = ft.FilePicker(on_result=get_file)
     dlg_progress = ft.AlertDialog(title=ft.Text("Carving in Progress"),
                                   content=ft.ProgressRing(width=25, height=25, stroke_width=2),
@@ -81,20 +90,21 @@ def main(page: ft.Page):
                                   modal=True)
     dlg_error = ft.AlertDialog(title=ft.Text("Error"))
     page.overlay.append(dlg_pick_dir)
+    page.overlay.append(dlg_get_unallocated_dir)
     page.overlay.append(dlg_pick_file)
 
     # text fields
-    t_selected_file = ft.TextField(label="File to Carve", read_only=True)
+    t_unallocated_dir = ft.TextField(label="Unallocated Space Directory", read_only=True)
     t_output_directory = ft.TextField(label="Output directory", read_only=True)
 
     # buttons
     b_file_select = ft.ElevatedButton(
-        text="Select File",
-        on_click=lambda _: dlg_pick_file.pick_files()
+        text="Select Directory",
+        on_click=lambda _: dlg_get_unallocated_dir.get_directory_path()
     )
     b_carve = ft.ElevatedButton(
         text="Carve",
-        on_click=lambda _: carve_files(t_selected_file.value, t_output_directory.value),
+        on_click=lambda _: carve_files(t_unallocated_dir.value, t_output_directory.value),
         height=50, width=150
     )
     b_output_directory = ft.ElevatedButton(
@@ -111,7 +121,11 @@ def main(page: ft.Page):
     page.add(
         ft.Column([
             ft.Row([
-                t_selected_file,
+                ft.Text("File Carver", size=40)
+            ], alignment=ft.MainAxisAlignment.CENTER),
+            ft.Container(padding=10),
+            ft.Row([
+                t_unallocated_dir,
                 b_file_select,
             ],
                 alignment=ft.MainAxisAlignment.CENTER
